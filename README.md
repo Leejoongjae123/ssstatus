@@ -1,36 +1,153 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 채널톡 서비스 상태 관리 시스템
 
-## Getting Started
+## 프로젝트 개요
 
-First, run the development server:
+채널톡 서비스 상태 관리 시스템은 자동 캡쳐 응답 기능의 활성화/비활성화를 관리하는 웹 기반 애플리케이션입니다. 관리자가 간단한 인터페이스를 통해 채널톡 서비스의 상태를 제어할 수 있습니다.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 주요 기능
+
+- **채널톡 서비스 상태 토글**: 채널톡 자동 응답 기능을 활성화/비활성화
+- **실시간 상태 표시**: 현재 서비스 상태를 시각적으로 표시
+- **API 연동**: 백엔드 API와 연동하여 상태 관리
+- **상태 피드백**: 작업 성공/실패 시 토스트 메시지로 사용자에게 알림
+
+## 기술 스택
+
+### 프론트엔드
+- **Next.js 14+**: React 기반 프레임워크
+- **React 18+**: 컴포넌트 기반 UI 라이브러리
+- **Tailwind CSS**: 유틸리티 기반 CSS 프레임워크
+- **Shadcn UI**: 재사용 가능한 UI 컴포넌트
+- **Radix UI**: 접근성이 우수한 컴포넌트 라이브러리
+
+### 백엔드 (연동)
+- **FastAPI**: 파이썬 기반 API 서버
+- **SQLite**: 가벼운 파일 기반 데이터베이스
+- **AWS API Gateway**: API 호스팅 및 관리
+
+## 설치 및 실행 방법
+
+### 사전 요구사항
+- Node.js 16.x 이상
+- npm 또는 yarn
+
+### 설치 단계
+
+1. 저장소 클론
+   ```bash
+   git clone [저장소 URL]
+   cd channel_talk_onoff
+   ```
+
+2. 의존성 설치
+   ```bash
+   npm install
+   # 또는
+   yarn install
+   ```
+
+3. 개발 서버 실행
+   ```bash
+   npm run dev
+   # 또는
+   yarn dev
+   ```
+
+4. 브라우저에서 다음 주소로 접속
+   ```
+   http://localhost:3000/admin
+   ```
+
+## 환경 변수 설정
+
+프로젝트 루트에 `.env.local` 파일을 생성하고 다음 변수를 설정합니다:
+
+```
+# API 서비스 URL (필요한 경우)
+NEXT_PUBLIC_API_BASE_URL=https://f0rj3b625m.execute-api.ap-southeast-2.amazonaws.com
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 배포 방법
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Vercel (권장)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. [Vercel](https://vercel.com)에 가입 및 로그인
+2. 깃허브, 깃랩 또는 비트버킷에서 프로젝트 가져오기
+3. 환경 변수 설정
+4. 배포 버튼 클릭
 
-## Learn More
+### 수동 배포
 
-To learn more about Next.js, take a look at the following resources:
+1. 프로덕션용 빌드 생성
+   ```bash
+   npm run build
+   # 또는
+   yarn build
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. 빌드된 파일 배포
+   ```bash
+   npm start
+   # 또는
+   yarn start
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## API 엔드포인트
 
-## Deploy on Vercel
+### 상태 조회
+- **URL**: `/api/service/status`
+- **Method**: GET
+- **설명**: 현재 채널톡 서비스 상태 조회
+- **응답 예시**:
+  ```json
+  {
+    "state": "Y"  // "Y": 활성화, "N": 비활성화
+  }
+  ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 상태 변경
+- **URL**: `/api/service/status`
+- **Method**: POST
+- **요청 본문**:
+  ```json
+  {
+    "state": "Y"  // "Y": 활성화, "N": 비활성화
+  }
+  ```
+- **응답 예시**:
+  ```json
+  {
+    "message": "서비스가 '활성화'되었습니다"
+  }
+  ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 기능 상세 설명
+
+본 서비스는 채널톡에서 사용자 메시지를 감지하고 특정 조건에 맞는 메시지(캡쳐 요청)가 있을 경우 자동으로 분석하여 응답하는 기능을 제어합니다.
+
+- **활성화 상태**: 서비스가 활성화되면 자동 캡쳐 및 OCR 분석 기능이 동작합니다.
+- **비활성화 상태**: 서비스가 비활성화되면 자동 응답 기능이 작동하지 않습니다.
+
+## 주의사항
+
+1. 프로덕션 환경에서는 환경 변수를 통해 API URL을 설정해야 합니다.
+2. 백엔드 서버가 동작 중이어야 상태 관리가 가능합니다.
+3. 채널톡 API 키가 유효해야 서비스가 정상적으로 작동합니다.
+
+## 문제 해결
+
+### 일반적인 문제
+
+- **상태 변경이 되지 않음**: 백엔드 서버 연결 상태 확인
+- **404 오류**: API 엔드포인트 URL 확인
+- **토스트 메시지가 표시되지 않음**: 컴포넌트 로드 확인
+
+## 라이센스
+
+이 프로젝트는 MIT 라이센스 하에 배포됩니다. 자세한 내용은 LICENSE 파일을 참조하세요.
+
+## 연락처 및 지원
+
+문제 발생 시 다음 연락처로 문의해 주세요:
+- 이메일: [support@example.com]
+- 이슈 트래커: [GitHub 이슈 페이지 URL]
